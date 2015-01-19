@@ -12,7 +12,10 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-public class BubbleService extends Service implements View.OnTouchListener{
+import com.facebook.rebound.Spring;
+import com.facebook.rebound.SpringListener;
+
+public class BubbleService extends Service implements View.OnTouchListener, SpringListener {
 
     private WindowManager windowManager;
     private WindowManager.LayoutParams params;
@@ -81,5 +84,25 @@ public class BubbleService extends Service implements View.OnTouchListener{
         if (bubbleLayout != null) {
             windowManager.removeView(bubbleLayout);
         }
+    }
+
+    @Override
+    public void onSpringUpdate(Spring spring) {
+        
+    }
+
+    @Override
+    public void onSpringAtRest(Spring spring) {
+
+    }
+
+    @Override
+    public void onSpringActivate(Spring spring) {
+
+    }
+
+    @Override
+    public void onSpringEndStateChange(Spring spring) {
+
     }
 }
