@@ -12,20 +12,21 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-public class BubbleService extends Service {
+public class BubbleService extends Service implements View.OnTouchListener{
 
-    private final String TAG = this.getClass().getSimpleName();
     private WindowManager windowManager;
     private WindowManager.LayoutParams params;
     private ImageView bubble;
     private RelativeLayout bubbleLayout;
+    private int initialX;
+    private int initialY;
+    private float initialTouchX;
+    private float initialTouchY;
 
     public BubbleService() {}
 
     @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
+    public IBinder onBind(Intent intent) { return null; }
 
     @Override
     public void onCreate() {
@@ -43,35 +44,29 @@ public class BubbleService extends Service {
 
     private void createSuperDroid() {
         params.gravity = Gravity.TOP | Gravity.START;
-
         bubble = new ImageView(this);
         bubble.setImageResource(R.drawable.ic_bubble_android);
         bubbleLayout.addView(bubble, 0);
-        bubble.setOnTouchListener(new View.OnTouchListener() {
-            private int initialX;
-            private int initialY;
-            private float initialTouchX;
-            private float initialTouchY;
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        initialX = params.x;
-                        initialY = params.y;
-                        initialTouchX = event.getRawX();
-                        initialTouchY = event.getRawY();
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        params.x = initialX + (int) (event.getRawX() - initialTouchX);
-                        params.y = initialY + (int) (event.getRawY() - initialTouchY);
-                        windowManager.updateViewLayout(bubbleLayout, params);
-                        break;
-                }
-                return true;
-            }
-        });
+        bubble.setOnTouchListener(this);
         windowManager.addView(bubbleLayout, params);
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                initialX = params.x;
+                initialY = params.y;
+                initialTouchX = event.getRawX();
+                initialTouchY = event.getRawY();
+                break;
+            case MotionEvent.ACTION_MOVE:
+                params.x = initialX + (int) (event.getRawX() - initialTouchX);
+                params.y = initialY + (int) (event.getRawY() - initialTouchY);
+                windowManager.updateViewLayout(bubbleLayout, params);
+                break;
+        }
+        return true;
     }
 
     @Override
@@ -87,5 +82,4 @@ public class BubbleService extends Service {
             windowManager.removeView(bubbleLayout);
         }
     }
-
 }
